@@ -1,5 +1,6 @@
 const textOnly = /^[a-zA-Z ]*$/;
 const date = /^\d{4}\/(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])$/;
+const email = /^(?=.*@)(?=.*\.).+$/
 //date =  ^\d{4}\/\d{2}\/\d{2}$
 
 
@@ -11,7 +12,7 @@ function validateInput(req, res, next){
 
     let mail = req.body.email ? req.body.email : req.params.email;
 
-    if( mail == "" || !mail.includes('@') || !mail.includes('.')){ 
+    if( mail == "" || !email.test(mail)){ 
         return res.status(400).json({ statusCode : 400, error : 'Email must be in correct format. Example: "fredflintstone@bedrock.com"' }); 
             }
     if( !req.body.firstname || req.body.firstname == "" || !textOnly.test(req.body.firstname)) { 
