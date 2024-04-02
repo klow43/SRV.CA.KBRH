@@ -1,8 +1,12 @@
+require('dotenv').config();
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+
+//just because
+const homeRouter = require('./routes/home');
 
 //GET lists of participants
 const participantsRouter = require('./routes/participants');
@@ -25,13 +29,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//GET lists of participants
+app.use('/', homeRouter);
 app.use('/', participantsRouter);
-
-//GET specific participant
 app.use('/', singleParticipantRouter);
-
-//POST, PUT, "DELETE" specific participant
 app.use('/', alterParticipantRouter);
 
 // catch 404 and forward to error handler
