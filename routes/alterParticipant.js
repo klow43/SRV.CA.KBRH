@@ -15,7 +15,7 @@ router.post('/participants/add', validateInput, async function (req, res, next )
         firstname : req.body.firstname,
         lastname : req.body.lastname,
         date : req.body.date,
-        active : 1
+        active : req.body.active ? req.body.active : 1
         }, { $index : ['active']
     });
     await participants.item(req.body.email)
@@ -34,12 +34,14 @@ router.post('/participants/add', validateInput, async function (req, res, next )
 
 //PUT change participant of email
 router.put('/participants/:email', validateInput, async function ( req, res, next ) {
+    let checkDB = await participants.get(req.params.email)
+    if( checkDB == null ){ return res.status(404).json({ statusCode : 404, error : 'No such email in database.'}) };
     try{
         await participants.set( req.params.email, {
             firstname : req.body.firstname,
             lastname : req.body.lastname,
             date : req.body.date,
-            active : 1
+            active : req.body.active ? req.body.active : 1,
             }, { $index : ['active']
         });
         await participants.item(req.params.email)
@@ -61,15 +63,17 @@ router.put('/participants/:email', validateInput, async function ( req, res, nex
 router.delete('/participants/:email', async function ( req, res, next ) {
     const email = /^(?=.*@)(?=.*\.).+$/
     if( !email.test(req.params.email) ){
-        return res.status(400).json({ status: 404, error : 'format of email in parameters incorrect'})
+        return res.status(400).json({ status: 404, error : 'format of email in parameters incorrect.'})
     }
+    let checkDB = await participants.get(req.params.email)
+    if( checkDB == null ){ return res.status(404).json({ statusCode : 404, error : 'No such email in database.'}) };
     try{
         await participants.set( req.params.email, {
             active : 0
         })
     }
     catch(err){ console.log(err); res.status(500).json({ statusCode : 500, error : 'Unable to update database, please try again later.'}) };
-    
+
     res.status(200).json({ statusCode : 200, message : 'Participant of provided email active status altered to inactive.'})
 });
 

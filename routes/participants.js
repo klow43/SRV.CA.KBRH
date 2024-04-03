@@ -5,7 +5,7 @@ const CyclicDB = require('@cyclic.sh/dynamodb');
 const db = CyclicDB(process.env.CYCLIC_DB);
 let participants = db.collection('participants');
 
-//GET participant list ALL, active and not active.
+//GET participant list ALL, active and not active. include fname and lname
 router.get('/participants', async function(req, res, next) {
 let list;
 try{
