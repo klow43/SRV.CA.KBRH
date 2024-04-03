@@ -1,24 +1,38 @@
 const express = require('express');
 const router = express.Router();
 
-//return JSON object on everything!
+const CyclicDB = require('@cyclic.sh/dynamodb');
+const db = CyclicDB(process.env.CYCLIC_DB);
+let participants = db.collection('participants');
 
-//GET participant list ALL, delete and no delete
-router.get('/participants', function(req, res, next) {
-//get list of ALL participants, only names?
-  res.end();
+//GET participant list ALL, active and not active.
+router.get('/participants', async function(req, res, next) {
+let list;
+try{
+  list = await participants.list();
+  }catch(err){ console.log(err); res.status(500).json({ statusCode : 500, error : 'Could not retrieve records from database, please try again later.'}) }
+  
+  res.status(200).json({ statusCode : 200, list });
 });
 
-//GET participant list ACTIVE
-router.get('/participants/details', function(req, res, next) {
-//get list of fname,lname of all participants not "deleted"/active
-  res.end();
+//GET participant list ACTIVE : 1, fname, lname included.
+router.get('/participants/details', async function(req, res, next) {
+  let participant;
+  try{
+    participant = await participants.filter({ 'active' : 1});
+  }catch(err){ console.log(err); res.status(500).json({ statusCode : 500, error : 'Could not retrieve records from database, please try again later.'}) }
+  
+  res.status(200).json({ statusCode : 200, participant });
 });
 
-//GET participant list "DELETED", soft-delete
-router.get('/participants/deleted', function(req, res, next){
-//get participants fname,lname of all participants "deleted"/not active
-  res.end();
+//GET participant list "DELETED", ACTIVE : 0, fname, lname included.
+router.get('/participants/deleted', async function(req, res, next){
+  let participant;
+  try{
+    participant = await participants.filter({ 'active' : 0 });
+  }catch(err){ console.log(err); res.status(500).json({ statusCode : 500, error : 'Could not retrieve records from database, please try again later.'}) }
+
+  res.status(200).json({ statusCode : 200, participant });
 });
 
 module.exports = router;
