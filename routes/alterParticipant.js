@@ -57,12 +57,11 @@ router.put('/participants/:email', validateInput, async function ( req, res, nex
     res.status(200).json({ statusCode : 200, message : 'Participant altered.'});
 });
 
-//DELETE "soft-delete" participant of email
+//DELETE - "soft-delete" participant of email(cahnge active from 1 to 0)
 router.delete('/participants/:email', async function ( req, res, next ) {
-    //change "active" status, do not delete
     const email = /^(?=.*@)(?=.*\.).+$/
     if( !email.test(req.params.email) ){
-        return res.status(400).json({ status: 404, error : 'email in parameters incorrect'})
+        return res.status(400).json({ status: 404, error : 'format of email in parameters incorrect'})
     }
     try{
         await participants.set( req.params.email, {
@@ -70,7 +69,7 @@ router.delete('/participants/:email', async function ( req, res, next ) {
         })
     }
     catch(err){ console.log(err); res.status(500).json({ statusCode : 500, error : 'Unable to update database, please try again later.'}) };
-
+    
     res.status(200).json({ statusCode : 200, message : 'Participant of provided email active status altered to inactive.'})
 });
 
