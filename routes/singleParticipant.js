@@ -1,27 +1,68 @@
 const express = require('express');
 const router = express.Router();
 
-//return JSON object on everything!
-//only participant NOT DELETED
+const CyclicDB = require('@cyclic.sh/dynamodb');
+const db = CyclicDB(process.env.CYCLIC_DB);
+let participants = db.collection('participants');
 
-//GET participent of email, personal details
+const email = /^(?=.*@)(?=.*\.).+$/
+
+
+//GET participent of email, personal details(not "deleted")
 router.get('/participants/details/:email', async function( req, res, next ) {
-//GET fname,lname,active of email(not deleted)
-res.end();
+    if( !email.test(req.params.email)){
+        return res.status(400).json({ statusCode : 400, error : 'Not valid email format.'})
+    }
+    let participant;
+    let get = await participants.get(req.params.email)
+    if( get.props.active == 1){  
+    try{
+        participant = await participants.get(req.params.email);
+    }
+    catch(err){console.log(err); res.status(500).json({ statusCode : 500, error : 'Could not connect to database, please try again later.'})};
+        }
+
+    if( participant == null ){ return res.status(404).json({ statusCode : 404, message : 'Email not in database, please check parameters.'})};
+
+    res.status(200).json({ statusCode : 200, participant});
 });
 
 
-//GET participant of email, work details
+//GET participant of email, work fragment(not "deleted")
 router.get('/participants/work/:email', async function( req, res, next ) {
-//GET company name, salary, currency(not deleted)
-res.end();
+    if( !email.test(req.params.email)){
+        return res.status(400).json({ statusCode : 400, error : 'Not valid email format.'})
+    }
+    let participant;
+    let get = await participants.get(req.params.email)
+    if( get.props.active == 1){
+    try{   
+          participant = await participants.item(req.params.email).fragment('work').get();  
+    }
+    catch(err){ console.log(err); res.status(500).json({ statusCode : 500, error : 'Could not connect to database, please try again later.' }); }
+        }
+    if( participant == null ){ return res.status(404).json({ statusCode : 404, message : 'Email not in database, please check parameters.'})};
+
+    res.status(200).json({ statusCode : 200, participant }); 
 });
 
 
-//GET participant of email, home details
+//GET participant of email, home fragment(not "deleted")
 router.get('/participants/home/:email', async function( req, res, next ) {
-//GET country, city of email (not deleted)
-res.end();
+    if( !email.test(req.params.email)){
+        return res.status(400).json({ statusCode : 400, error : 'Not valid email format.'})
+    }
+    let participant;
+    let get = await participants.get(req.params.email)
+    if( get.props.active == 1){
+    try{   
+          participant = await participants.item(req.params.email).fragment('home').get();  
+    }
+    catch(err){ console.log(err); res.status(500).json({ statusCode : 500, error : 'Could not connect to database, please try again later.' }); }
+        }
+    if( participant == null ){ return res.status(404).json({ statusCode : 404, message : 'Email not in database, please check parameters.'})};
+
+    res.status(200).json({ statusCode : 200, participant });   
 });
 
 module.exports = router;
