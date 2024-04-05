@@ -1,0 +1,10 @@
+#homeImage{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width : 50%
+}
+
+#homeh1{
+    font-family: papyrus;
+}
