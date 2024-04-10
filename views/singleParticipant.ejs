@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+    <h3 class="text-center my-5">Persons <%=detailName%></h3>
+   <div class="container w-100 my-5">
+        <div class="row">
+            <div class="col-5">
+                <p>Email </p>
+            </div>
+            <div class="col">
+                <p><%=participant.firstName%></p>
+            </div>
+            <div class="col-4">
+                <p><%=participant.secondName%></p>
+            </div>
+            <%if(participant.thirdName){%>
+                <div class="col">
+                    <p><%=participant.thirdName%></p>
+                </div>
+            <%}%>
+        </div>
+        <div class="row">
+            <div class="col-5">
+                <p><%=participant.email%></p>
+            </div>
+            <div class="col">
+                <p><%=participant.first%></p>
+            </div>
+            <div class="col-4">
+                <p><%=participant.second%></p>
+            </div>
+            <%if(participant.third){%>
+                <div class="col">
+                    <p><%=participant.third%></p>
+                </div>
+            <%}%>
+        </div>
+   </div> 
+</body>
+</html>

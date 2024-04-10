@@ -7,32 +7,44 @@ let participants = db.collection('participants');
 
 //GET participant list ALL, active and not active. include fname and lname
 router.get('/participants', async function(req, res, next) {
-let list;
+let data;
 try{
-  list = await participants.list();
+  data = await participants.list();
   }catch(err){ console.log(err); res.status(500).json({ statusCode : 500, error : 'Could not retrieve records from database, please try again later.'}) }
   
-  res.status(200).json({ statusCode : 200, list });
+  let participant = data.results;
+  res.status(200).json({ participant });
+  //frontend code:
+  // let listName = "all partipants"
+  // res.render('listParticipant', { statusCode : 200, participant, listName})
 });
 
 //GET participant list ACTIVE : 1, fname, lname included.
 router.get('/participants/details', async function(req, res, next) {
-  let participant;
+  let data;
   try{
-    participant = await participants.filter({ 'active' : 1});
+    data = await participants.filter({ 'active' : 1});
   }catch(err){ console.log(err); res.status(500).json({ statusCode : 500, error : 'Could not retrieve records from database, please try again later.'}) }
   
-  res.status(200).json({ statusCode : 200, participant });
+  let participant = data.results; 
+  res.status(200).json({ participant });
+  //frontend code:
+  // let listName = "active participants details";
+  // res.render('listParticipant', { statusCode : 200, participant, listName });
 });
 
 //GET participant list "DELETED", ACTIVE : 0, fname, lname included.
 router.get('/participants/deleted', async function(req, res, next){
-  let participant;
+  let data;
   try{
-    participant = await participants.filter({ 'active' : 0 });
+    data = await participants.filter({ 'active' : 0 });
   }catch(err){ console.log(err); res.status(500).json({ statusCode : 500, error : 'Could not retrieve records from database, please try again later.'}) }
 
-  res.status(200).json({ statusCode : 200, participant });
+  let participant = data.results;
+  res.status(200).json({ participant });
+  //frontend code:
+  // let listName = "deactivet participants details";
+  // res.render('listParticipant', { statusCode : 200, participant, listName });
 });
 
 module.exports = router;
